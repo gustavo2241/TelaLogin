@@ -1,0 +1,73 @@
+﻿<h2>Extração Pontual Ofertas CSD</h2>
+<hr />
+<br />
+<label>Digite o código da oferta: </label>
+<div class="input-group mb-3">
+    <input id="codigoOferta" type="text" class="form-control" placeholder="Codigo Oferta" aria-label="Recipient's username" aria-describedby="basic-addon2">
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="button" onclick="buscaOferta()">Buscar</button>
+    </div>
+</div>
+<br />
+<table id="table_id" class="table table-striped table-bordered table-sm" style="display: none;">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">CodigoOferta</th>
+            <th scope="col">Documento</th>
+            <th scope="col">DataAtivaçao</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th id="id"></th>
+            <td id="codigo"></td>
+            <td id="documento"></td>
+            <td id="data"></td>
+        </tr>
+    </tbody>
+</table>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+
+<script>
+
+    function buscaOferta() {
+        var codigoOferta = $("#codigoOferta").val();
+        $.ajax({
+            //url: document.URL + '/Home/BuscaOferta/' + codigoOferta,
+            url: '/Home/BuscaOferta/' + codigoOferta,
+            type: 'GET',
+            success: function (data) {
+                console.log(data)
+                $('#table_id').show();
+                $('#table_id').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'csvHtml5',
+                            charset: 'UTF-16LE',
+                            extension: '.csv',
+                            fieldSeparator: ';',
+                            filename: 'ofertasPontuais',
+                            bom: true
+                        }
+                    ],
+                    "aaData": data,
+                    "aoColumns": [{
+                        "mDataProp": "id"
+                    }, {
+                        "mDataProp": "codigoOferta"
+                    }, {
+                        "mDataProp": "documento"
+                    }, {
+                        "mDataProp": "dataAtivacao"
+                    }]
+                });
+            },
+            error: function (xhr) {
+                console.log(xhr.responseText);
+            }
+        })
+    };
+</script>
